@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="header_panel_height">56dp</dimen>
+    <dimen name="header_panel_button_size">48dp</dimen>
+    <dimen name="header_panel_button_margin">4dp</dimen>
+    <dimen name="header_panel_title_margin_top">10dp</dimen>
+    <dimen name="header_panel_title_margin_start">12dp</dimen>
+    <dimen name="button_margin">16dp</dimen>
+    <dimen name="text_size">22sp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+</resources>
