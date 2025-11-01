@@ -10,16 +10,31 @@
         <item name="android:textColor">@color/text_black</item>
     </style>
 
-    <style name="MaterialTextViewStyle" parent="Widget.MaterialComponents.TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">61dp</item>
-        <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textFontWeight">500</item>
-        <item name="android:textSize">@dimen/text_size</item>
+    <style name="SettingsListTextViewStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/settings_text_size</item>
         <item name="android:textColor">@color/text_black</item>
         <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">18dp</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+    
+    <style name="SettingsListLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">61dp</item>
+    </style>
+
+    <style name="SettingsIconLayoutStyle">
+        <item name="android:layout_width">@dimen/settings_icon_size</item>
+        <item name="android:layout_height">@dimen/settings_icon_size</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_horizontal|center_vertical</item>
     </style>
 
     <style name="HeaderButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
@@ -33,7 +48,7 @@
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:textSize">0sp</item>
         <item name="iconTint">@color/text_black</item>
-        <item name="iconSize">16dp</item>
+        <item name="iconSize">@dimen/icon_size</item>
         <item name="iconPadding">0dp</item>
         <item name="iconGravity">textStart</item>
         <item name="checkedIconMargin">4dp</item>

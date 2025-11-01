@@ -15,7 +15,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val backButton = findViewById<Button>(R.id.back)
         backButton.setOnClickListener {
-            startMainActivity()
+            finish()
         }
     }
 

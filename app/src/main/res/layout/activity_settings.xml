@@ -16,9 +16,7 @@
         <Button
             android:id="@+id/back"
             style="@style/HeaderButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:icon="@drawable/back"
+            app:icon="@drawable/ic_back_arrow_24"
             />
 
         <FrameLayout
@@ -35,30 +33,67 @@
         </FrameLayout>
     </LinearLayout>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        style="@style/MaterialTextViewStyle"
-        android:layout_marginTop="24dp"
-        android:text="@string/settings_theme_label"
-        android:textAppearance="@style/TitleTextStyle"
-        android:paddingVertical="0dp"
-        android:paddingEnd="17dp"
-        android:checked="true"
-        android:contentDescription="@string/settings_theme_label"/>
+    <LinearLayout
+        style="@style/SettingsListLinearLayoutStyle"
+        android:layout_marginTop="24dp">
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            style="@style/SettingsListTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/settings_theme_label"
+            android:textAppearance="@style/TitleTextStyle"
+            android:paddingVertical="0dp"
+            android:paddingEnd="15dp"
+            android:checked="true"
+            android:contentDescription="@string/settings_theme_label"/>
+    </LinearLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-        style="@style/MaterialTextViewStyle"
-        android:drawableEnd="@drawable/share"
-        android:text="@string/settings_share_label" />
 
-    <com.google.android.material.textview.MaterialTextView
-        style="@style/MaterialTextViewStyle"
-        android:drawableEnd="@drawable/support"
-        android:text="@string/settings_support_label" />
+    <LinearLayout
+        style="@style/SettingsListLinearLayoutStyle"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/SettingsListTextViewStyle"
+            android:text="@string/settings_share_label" />
 
-    <com.google.android.material.textview.MaterialTextView
-        style="@style/MaterialTextViewStyle"
-        android:drawableEnd="@drawable/arrow"
-        android:text="@string/settings_user_agreement_label" />
+        <LinearLayout
+            style="@style/SettingsIconLayoutStyle">
+            <ImageView
+                android:src="@drawable/ic_share_24"
+                android:layout_width="@dimen/settings_icon_size"
+                android:layout_height="@dimen/settings_icon_size" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/SettingsListLinearLayoutStyle"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/SettingsListTextViewStyle"
+            android:text="@string/settings_support_label" />
+        <LinearLayout
+            style="@style/SettingsIconLayoutStyle">
+            <ImageView
+                android:src="@drawable/ic_support_24"
+                android:layout_width="@dimen/settings_icon_size"
+                android:layout_height="@dimen/settings_icon_size" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/SettingsListLinearLayoutStyle"
+        android:orientation="horizontal">
+        <TextView
+            style="@style/SettingsListTextViewStyle"
+            android:text="@string/settings_user_agreement_label" />
+        <LinearLayout
+            style="@style/SettingsIconLayoutStyle">
+            <ImageView
+                android:src="@drawable/ic_arrow_24"
+                android:layout_width="@dimen/settings_icon_size"
+                android:layout_height="@dimen/settings_icon_size" />
+        </LinearLayout>
+    </LinearLayout>
 
 
 </LinearLayout>
