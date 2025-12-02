@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="?attr/colorPrimary">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -37,7 +37,7 @@
         style="@style/SettingsListLinearLayoutStyle"
         android:layout_marginTop="24dp">
         <com.google.android.material.switchmaterial.SwitchMaterial
-            style="@style/SettingsListTextViewStyle"
+            style="@style/SettingsSwitchStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/settings_theme_label"
@@ -46,12 +46,13 @@
             android:paddingEnd="15dp"
             android:checked="true"
             android:contentDescription="@string/settings_theme_label"/>
+
     </LinearLayout>
 
 
     <LinearLayout
-        style="@style/SettingsListLinearLayoutStyle"
-        android:orientation="horizontal">
+        android:id="@+id/shareBlock"
+        style="@style/SettingsListLinearLayoutStyle">
         <TextView
             style="@style/SettingsListTextViewStyle"
             android:text="@string/settings_share_label" />
@@ -59,6 +60,7 @@
         <LinearLayout
             style="@style/SettingsIconLayoutStyle">
             <ImageView
+                style="@style/SettingsIconStyle"
                 android:src="@drawable/ic_share_24"
                 android:layout_width="@dimen/settings_icon_size"
                 android:layout_height="@dimen/settings_icon_size" />
@@ -66,14 +68,15 @@
     </LinearLayout>
 
     <LinearLayout
-        style="@style/SettingsListLinearLayoutStyle"
-        android:orientation="horizontal">
+        android:id="@+id/supportBlock"
+        style="@style/SettingsListLinearLayoutStyle">
         <TextView
             style="@style/SettingsListTextViewStyle"
             android:text="@string/settings_support_label" />
         <LinearLayout
             style="@style/SettingsIconLayoutStyle">
             <ImageView
+                style="@style/SettingsIconStyle"
                 android:src="@drawable/ic_support_24"
                 android:layout_width="@dimen/settings_icon_size"
                 android:layout_height="@dimen/settings_icon_size" />
@@ -81,14 +84,15 @@
     </LinearLayout>
 
     <LinearLayout
-        style="@style/SettingsListLinearLayoutStyle"
-        android:orientation="horizontal">
+        android:id="@+id/userAgreementBlock"
+        style="@style/SettingsListLinearLayoutStyle">
         <TextView
             style="@style/SettingsListTextViewStyle"
             android:text="@string/settings_user_agreement_label" />
         <LinearLayout
             style="@style/SettingsIconLayoutStyle">
             <ImageView
+                style="@style/SettingsIconStyle"
                 android:src="@drawable/ic_arrow_24"
                 android:layout_width="@dimen/settings_icon_size"
                 android:layout_height="@dimen/settings_icon_size" />

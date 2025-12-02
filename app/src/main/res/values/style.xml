@@ -7,7 +7,7 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:textSize">@dimen/text_size</item>
-        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
     <style name="SettingsListTextViewStyle" parent="Widget.MaterialComponents.TextView">
@@ -17,7 +17,7 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/settings_text_size</item>
-        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
@@ -25,6 +25,7 @@
     <style name="SettingsListLinearLayoutStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">61dp</item>
+        <item name="android:orientation">horizontal</item>
     </style>
 
     <style name="SettingsIconLayoutStyle">
@@ -37,6 +38,14 @@
         <item name="android:gravity">center_horizontal|center_vertical</item>
     </style>
 
+    <style name="SettingsSwitchStyle" parent="SettingsListTextViewStyle">
+        <item name="android:tint">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="SettingsIconStyle">
+        <item name="android:tint">?attr/colorPrimaryVariant</item>
+    </style>
+
     <style name="HeaderButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:minWidth">@dimen/header_panel_button_size</item>
         <item name="android:minHeight">@dimen/header_panel_button_size</item>
@@ -45,9 +54,9 @@
         <item name="android:layout_marginVertical">@dimen/header_panel_button_margin</item>
         <item name="android:layout_marginStart">@dimen/header_panel_button_margin</item>
         <item name="android:layout_marginEnd">0dp</item>
-        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
         <item name="android:textSize">0sp</item>
-        <item name="iconTint">@color/text_black</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
         <item name="iconSize">@dimen/icon_size</item>
         <item name="iconPadding">0dp</item>
         <item name="iconGravity">textStart</item>
@@ -64,11 +73,11 @@
         <item name="android:layout_marginHorizontal">@dimen/button_margin</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">@dimen/text_size</item>
-        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="cornerRadius">16dp</item>
         <item name="iconGravity">textStart</item>
-        <item name="iconTint">@color/text_black</item>
+        <item name="iconTint">@color/black</item>
         <item name="iconPadding">8dp</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
