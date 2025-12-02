@@ -19,6 +19,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var inputSearchText: EditText
     private lateinit var buttonClearSearch: ImageView
     private var currentText: String = ""
+    private val searchTextKey: String = "search_text"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +33,7 @@ class SearchActivity : AppCompatActivity() {
         inputSearchText = findViewById<EditText>(R.id.inputSearchText)
         buttonClearSearch = findViewById(R.id.buttonClearSearch)
 
-        val simpleTextWatcher = object : TextWatcher {
+        inputSearchText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -43,13 +44,11 @@ class SearchActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
             }
-        }
-
-        inputSearchText.addTextChangedListener(simpleTextWatcher)
+        })
 
         buttonClearSearch.setOnClickListener {
             inputSearchText.text.clear()
-            buttonClearSearch.visibility = View.GONE
+            buttonClearSearch.isVisible = true
 
             val imm = getSystemService<InputMethodManager>()
             imm?.hideSoftInputFromWindow(inputSearchText.windowToken, 0)
@@ -58,11 +57,11 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("search_text", currentText)
+        outState.putString(searchTextKey, currentText)
     }
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        val restoredText = savedInstanceState.getString("search_text", "")
+        val restoredText = savedInstanceState.getString(searchTextKey, "")
         inputSearchText.setText(restoredText)
     }
 }
