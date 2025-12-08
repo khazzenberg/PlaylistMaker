@@ -18,6 +18,7 @@
         <item name="editTextBackgroundColor">@color/white</item>
         <item name="editTextColorText">@color/abs_black</item>
         <item name="editTextColorTextHint">@color/black</item>
+        <item name="colorTertiary">@color/white</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />

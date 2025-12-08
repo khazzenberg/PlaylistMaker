@@ -14,6 +14,8 @@ import androidx.core.content.getSystemService
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var inputSearchText: EditText
@@ -53,6 +55,10 @@ class SearchActivity : AppCompatActivity() {
             val imm = getSystemService<InputMethodManager>()
             imm?.hideSoftInputFromWindow(inputSearchText.windowToken, 0)
         }
+
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = TrackAdapter()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
