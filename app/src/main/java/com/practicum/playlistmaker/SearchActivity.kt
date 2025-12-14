@@ -152,11 +152,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showErrorState() {
+        tracks.clear()
         errorState.visibility = View.VISIBLE
         emptyState.visibility = View.GONE
     }
 
     private fun showEmptyState() {
+        tracks.clear()
         errorState.visibility = View.GONE
         emptyState.visibility = View.VISIBLE
     }
