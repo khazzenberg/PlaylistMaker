@@ -7,6 +7,8 @@ class TrackAdapter (
     private val tracks: MutableList<Track>
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
+    var onTrackClick: ((Track) -> Unit)? = null
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -20,6 +22,9 @@ class TrackAdapter (
     ) {
         holder.bind(tracks.get(position))
         holder.itemView.setOnClickListener {  }
+        holder.itemView.setOnClickListener {
+            onTrackClick?.invoke(tracks[position])
+        }
     }
 
     override fun getItemCount(): Int {
