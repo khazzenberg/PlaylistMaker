@@ -40,16 +40,6 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    fun startMainActivity() {
-        val mainIntent = Intent(this, MainActivity::class.java)
-        startActivity(mainIntent)
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        startMainActivity()
-    }
-
     private fun share() {
         val shareUrl = getString(R.string.share_url)
         val shareMessage = getString(R.string.share_learn_android_text) + "\n$shareUrl"

@@ -20,4 +20,8 @@
     <string name="time">2:55</string>
     <string name="track_name">Yesterday (Remaster 2009)</string>
     <string name="track_artist">The Beatles</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="network_error">Проблемы со связью</string>
+    <string name="try_internet">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="retry">Обновить</string>
 </resources>
