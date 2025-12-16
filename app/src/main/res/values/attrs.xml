@@ -3,4 +3,5 @@
     <attr name="editTextBackgroundColor" format="color" />
     <attr name="editTextColorText" format="color" />
     <attr name="editTextColorTextHint" format="color" />
+    <attr name="whiteOpacity" format="color" />
 </resources>

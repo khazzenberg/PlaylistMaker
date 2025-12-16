@@ -146,7 +146,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">54dp</item>
         <item name="android:background">@drawable/round_button</item>
-        <item name="android:backgroundTint">@color/white_opacity</item>
+        <item name="android:backgroundTint">?attr/whiteOpacity</item>
         <item name="android:scaleType">centerCrop</item>
         <item name="tint">@color/white</item>
     </style>
