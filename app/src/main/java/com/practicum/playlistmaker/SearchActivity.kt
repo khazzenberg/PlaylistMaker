@@ -22,20 +22,30 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+const val SEARCH_TRACK_HISTORY_KEY = "searchTrackHistory"
+
 class SearchActivity : AppCompatActivity() {
     private lateinit var inputSearchText: EditText
     private lateinit var buttonClearSearch: ImageView
     private lateinit var emptyState: LinearLayout
     private lateinit var errorState: LinearLayout
     private lateinit var updateButton: Button
+    private lateinit var trackListSearch: RecyclerView
+    private lateinit var historyLayout : LinearLayout
+    private lateinit var clearHistoryButton: Button
+    private lateinit var searchHistory: SearchHistory
     private var currentText: String = ""
     private val searchTextKey: String = "search_text"
     private val trackService = RetrofitClient.iTunesService
     private val tracks: MutableList<Track> = mutableListOf()
     private val tracksAdapter = TrackAdapter(tracks)
+    private val tracksHistory: MutableList<Track> = mutableListOf()
+    private val historyAdapter = TrackAdapter(tracksHistory)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPreferences = getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPreferences)
         setContentView(R.layout.activity_search)
 
         val backButton = findViewById<Button>(R.id.back)
@@ -48,6 +58,8 @@ class SearchActivity : AppCompatActivity() {
         emptyState = findViewById(R.id.emptyState)
         errorState = findViewById(R.id.errorState)
         updateButton = findViewById(R.id.updateButton)
+        historyLayout = findViewById<LinearLayout>(R.id.historyLinearLayout)
+        clearHistoryButton = findViewById(R.id.clearButton)
 
         inputSearchText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -63,6 +75,9 @@ class SearchActivity : AppCompatActivity() {
 
                     emptyState.visibility = View.GONE
                     errorState.visibility = View.GONE
+
+                    historyLayout.visibility = View.VISIBLE
+                    updateHistory()
                 }
             }
 
@@ -101,6 +116,37 @@ class SearchActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = tracksAdapter
+
+        trackListSearch = findViewById(R.id.recyclerHistoryView)
+        trackListSearch.adapter = historyAdapter
+        tracksAdapter.onTrackClick = { track ->
+            searchHistory.addTrack(track)
+            tracksHistory.clear()
+            tracksHistory.addAll(searchHistory.getHistory())
+            historyAdapter.notifyDataSetChanged()
+        }
+
+        clearHistoryButton.setOnClickListener {
+            searchHistory.clear()
+            updateHistory()
+        }
+
+        inputSearchText.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus && inputSearchText.text.isEmpty()) {
+                historyLayout.visibility = View.VISIBLE
+                updateHistory()
+            }
+        }
+    }
+
+    private fun updateHistory() {
+        val list = searchHistory.getHistory()
+        if (list.isEmpty()) {
+            historyLayout.visibility = View.GONE
+        }
+        tracksHistory.clear()
+        tracksHistory.addAll(list)
+        historyAdapter.notifyDataSetChanged()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -124,6 +170,7 @@ class SearchActivity : AppCompatActivity() {
                             .format(result.trackTimeMillis)
                         tracks.add(
                             Track(
+                                trackId = result.trackId,
                                 trackName = result.trackName,
                                 artistName = result.artistName,
                                 trackTime = formattedTime,
@@ -132,6 +179,7 @@ class SearchActivity : AppCompatActivity() {
                         )
                     }
                     tracksAdapter.notifyDataSetChanged()
+                    historyLayout.visibility = View.GONE
                     if (tracks.isEmpty()) {
                         showEmptyState()
                     } else {
@@ -156,10 +204,12 @@ class SearchActivity : AppCompatActivity() {
     private fun showErrorState() {
         errorState.visibility = View.VISIBLE
         emptyState.visibility = View.GONE
+        historyLayout.visibility = View.GONE
     }
 
     private fun showEmptyState() {
         errorState.visibility = View.GONE
         emptyState.visibility = View.VISIBLE
+        historyLayout.visibility = View.GONE
     }
 }
