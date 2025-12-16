@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -124,6 +125,11 @@ class SearchActivity : AppCompatActivity() {
             tracksHistory.clear()
             tracksHistory.addAll(searchHistory.getHistory())
             historyAdapter.notifyDataSetChanged()
+            startPlayer(track)
+        }
+
+        historyAdapter.onTrackClick = { track ->
+            startPlayer(track)
         }
 
         clearHistoryButton.setOnClickListener {
@@ -149,6 +155,12 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.notifyDataSetChanged()
     }
 
+    private fun startPlayer(track: Track) {
+        val audioPlayerIntent = Intent(this, AudioPlayer::class.java)
+        audioPlayerIntent.putExtra(AudioPlayer.TRACK_EXTRA, track)
+        startActivity(audioPlayerIntent)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(searchTextKey, currentText)
@@ -163,20 +175,10 @@ class SearchActivity : AppCompatActivity() {
         trackService.searchSongs(query).enqueue(object : Callback<SearchResponse> {
             override fun onResponse(call: Call<SearchResponse>, response: Response<SearchResponse>) {
                 if (response.isSuccessful) {
-                    val body = response.body()
-                    tracks.clear()
-                    body?.results?.forEach { result ->
-                        val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault())
-                            .format(result.trackTimeMillis)
-                        tracks.add(
-                            Track(
-                                trackId = result.trackId,
-                                trackName = result.trackName,
-                                artistName = result.artistName,
-                                trackTime = formattedTime,
-                                artworkUrl100 = result.artworkUrl100
-                            )
-                        )
+                    val results = response.body()?.results.orEmpty()
+                    if (results.isNotEmpty()) {
+                        tracks.clear()
+                        tracks.addAll(results)
                     }
                     tracksAdapter.notifyDataSetChanged()
                     historyLayout.visibility = View.GONE
