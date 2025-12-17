@@ -20,10 +20,21 @@
     <string name="time">2:55</string>
     <string name="track_name">Yesterday (Remaster 2009)</string>
     <string name="track_artist">The Beatles</string>
+    <string name="album">Альбом</string>
+    <string name="time_current">0:30</string>
+    <string name="time_name">Длительность</string>
+    <string name="country">Страна</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="time_track">5:35</string>
+    <string name="year_track">1965</string>
+    <string name="genre_track">Rock</string>
+    <string name="country_track">Великобритания</string>
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="network_error">Проблемы со связью</string>
     <string name="try_internet">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="retry">Обновить</string>
     <string name="you_find">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+
 </resources>

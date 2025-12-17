@@ -12,13 +12,16 @@
     <dimen name="settings_text_size">16sp</dimen>
     <dimen name="icon_size">24dp</dimen>
     <dimen name="text_size_11">11sp</dimen>
+    <dimen name="text_size_13">14sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_small">16sp</dimen>
     <dimen name="text_size_19">19sp</dimen>
     <dimen name="text_size_medium">22sp</dimen>
     <dimen name="padding_small_8">8dp</dimen>
+    <dimen name="padding_12">8dp</dimen>
     <dimen name="padding_small">14dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_17">17dp</dimen>
     <dimen name="padding_large">102dp</dimen>
     <dimen name="image_small">45dp</dimen>
     <dimen name="image_state">120dp</dimen>
