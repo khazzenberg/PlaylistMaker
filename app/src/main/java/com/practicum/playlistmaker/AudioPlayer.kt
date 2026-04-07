@@ -28,6 +28,7 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
     private lateinit var pause: ImageView
     private lateinit var trackTimeCurrent: TextView
     private var mainThreadHandler: Handler? = null
+    private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,15 +98,6 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
         }
     }
 
-    companion object {
-        const val TRACK_EXTRA = "TRACK_EXTRA"
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val REFRESH_TIMER_DELAY_MILLS = 300L
-    }
-
     private fun visibleText(track: Track) {
         val trackYear = findViewById<TextView>(R.id.trackYear)
         val year = findViewById<TextView>(R.id.year)
@@ -148,7 +140,7 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
             pause.visibility = View.GONE
             play.visibility = View.VISIBLE
             mainThreadHandler?.removeCallbacks(refreshStopWatch)
-            trackTimeCurrent.text = SimpleDateFormat("mm:ss",Locale.getDefault()).format(0)
+            trackTimeCurrent.text = dateFormat.format(0)
         }
     }
 
@@ -202,5 +194,14 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
             mainThreadHandler?.postDelayed(this, REFRESH_TIMER_DELAY_MILLS)
             updateCurrentTime()
         }
+    }
+
+    companion object {
+        const val TRACK_EXTRA = "TRACK_EXTRA"
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val REFRESH_TIMER_DELAY_MILLS = 300L
     }
 }
