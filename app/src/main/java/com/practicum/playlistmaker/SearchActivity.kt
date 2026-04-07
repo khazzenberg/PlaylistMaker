@@ -81,12 +81,9 @@ class SearchActivity : AppCompatActivity() {
                 currentText = s.toString()
 
                 if (currentText.isEmpty()) {
+                    hide()
                     tracks.clear()
                     tracksAdapter.notifyDataSetChanged()
-
-                    emptyState.visibility = View.GONE
-                    errorState.visibility = View.GONE
-
                     historyLayout.visibility = View.VISIBLE
                     updateHistory()
                 }
@@ -99,9 +96,7 @@ class SearchActivity : AppCompatActivity() {
         inputSearchText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-                if (currentText.isNotEmpty()) {
-                    search(currentText)
-                }
+                search(currentText)
 
                 val imm = getSystemService<InputMethodManager>()
                 imm?.hideSoftInputFromWindow(inputSearchText.windowToken, 0)
@@ -114,7 +109,10 @@ class SearchActivity : AppCompatActivity() {
 
         buttonClearSearch.setOnClickListener {
             inputSearchText.text.clear()
+            inputSearchText.clearFocus()
             buttonClearSearch.isVisible = true
+
+            hide()
 
             val imm = getSystemService<InputMethodManager>()
             imm?.hideSoftInputFromWindow(inputSearchText.windowToken, 0)
@@ -189,6 +187,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun search(query: String) {
+        if (query.isEmpty()) {
+            return
+        }
+
+        hide()
         progressBar.visibility = View.VISIBLE
         trackService.searchSongs(query).enqueue(object : Callback<SearchResponse> {
             override fun onResponse(call: Call<SearchResponse>, response: Response<SearchResponse>) {
@@ -218,22 +221,25 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showSearchResults() {
         progressBar.visibility = View.GONE
-        errorState.visibility = View.GONE
-        emptyState.visibility = View.GONE
     }
 
     private fun showErrorState() {
+        trackListSearch.visibility = View.GONE
         errorState.visibility = View.VISIBLE
-        emptyState.visibility = View.GONE
-        historyLayout.visibility = View.GONE
         progressBar.visibility = View.GONE
     }
 
     private fun showEmptyState() {
-        errorState.visibility = View.GONE
+        trackListSearch.visibility = View.GONE
         emptyState.visibility = View.VISIBLE
-        historyLayout.visibility = View.GONE
         progressBar.visibility = View.GONE
+    }
+
+    private fun hide() {
+        trackListSearch.visibility = View.VISIBLE
+        errorState.visibility = View.GONE
+        emptyState.visibility = View.GONE
+        historyLayout.visibility = View.GONE
     }
 
     private fun clickDebounce(): Boolean {
