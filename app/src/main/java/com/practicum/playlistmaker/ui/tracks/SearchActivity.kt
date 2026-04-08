@@ -106,7 +106,7 @@ class SearchActivity : AppCompatActivity() {
         buttonClearSearch.setOnClickListener {
             inputSearchText.text.clear()
             inputSearchText.clearFocus()
-            buttonClearSearch.isVisible = true
+            buttonClearSearch.isVisible = false
 
             hide()
 

@@ -9,13 +9,15 @@ import java.util.Collections.emptyList
 private const val MAX_SIZE = 10
 
 class SearchHistoryStorage(val sharedPreferences: SharedPreferences){
-    fun getHistory() : MutableList<Track> {
+    private val gson: Gson = Gson()
+
+    fun getHistory() : List<TrackHistoryDto> {
         val json = sharedPreferences.getString(SEARCH_TRACK_HISTORY_KEY,null)
         if (json == null) return emptyList()
-        return  createHistoryFromJson(json)
+        return createHistoryFromJson(json)
     }
 
-    fun addTrackToHistory(track: Track) {
+    fun addTrackToHistory(track: TrackHistoryDto) {
         val list = getHistory().toMutableList()
 
         list.removeAll{track.trackId == it.trackId}
@@ -32,13 +34,13 @@ class SearchHistoryStorage(val sharedPreferences: SharedPreferences){
         sharedPreferences.edit().remove(SEARCH_TRACK_HISTORY_KEY).apply()
     }
 
-    private fun createJsonFromHistory(history: List<Track>): String {
-        return Gson().toJson(history)
+    private fun createJsonFromHistory(history: List<TrackHistoryDto>): String {
+        return gson.toJson(history)
     }
 
-    private fun createHistoryFromJson(json: String): MutableList<Track> {
-        val type = object : TypeToken<List<Track>>() {}.type
-        return Gson().fromJson(json, type)
+    private fun createHistoryFromJson(json: String): MutableList<TrackHistoryDto> {
+        val type = object : TypeToken<List<TrackHistoryDto>>() {}.type
+        return gson.fromJson(json, type)
     }
 
     companion object {
