@@ -1,18 +1,19 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.settings
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.Creator
 
 class SettingsActivity : AppCompatActivity() {
+    private val settingsInteractor by lazy { Creator.provideSettingsInteractor(applicationContext) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -41,9 +42,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        val sharedPrefs = getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
-        themeSwitcher.isChecked = sharedPrefs.getBoolean(DARK_THEME_KEY,false)
+        themeSwitcher.isChecked = settingsInteractor.isDarkThemeEnabled()
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            settingsInteractor.setDarkTheme(checked)
             (applicationContext as App).switchTheme(checked)
         }
     }
