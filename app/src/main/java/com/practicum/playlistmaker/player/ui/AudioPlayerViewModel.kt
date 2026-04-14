@@ -9,19 +9,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.player.domain.models.Track
+import com.practicum.playlistmaker.player.domain.models.PlayerLiveData
+import com.practicum.playlistmaker.search.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerViewModel(private val track: Track) : ViewModel() {
-    private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
-    fun observePlayerState(): LiveData<Int> = playerStateLiveData
-    private val progressTimeLiveData = MutableLiveData("00:00")
-    fun observeProgressTime(): LiveData<String> = progressTimeLiveData
+    val playerLiveData = MutableLiveData<PlayerLiveData>()
+    private var playerState = STATE_DEFAULT
+    //fun observePlayerState(): LiveData<Int> = playerStateLiveData
+    fun observePlayerVars(newPlayerLiveData: PlayerLiveData) {
+        playerLiveData.value = newPlayerLiveData
+        playerLiveData.postValue(newPlayerLiveData)
+    }
+    private var progressTime = "00:00"
+    //fun observeProgressTime(): LiveData<String> = progressTimeLiveData
     private var mediaPlayer = MediaPlayer()
     private var mainThreadHandler = Handler(Looper.getMainLooper())
     private val timerRunnable = Runnable {
-        if (playerStateLiveData.value == STATE_PLAYING) {
+        if (playerState == STATE_PLAYING) {
             startTimerUpdate()
         }
     }
@@ -37,7 +43,7 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
     }
 
     fun onPlayButtonClicked() {
-        when (playerStateLiveData.value) {
+        when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
             }
@@ -52,30 +58,40 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            playerState = STATE_PREPARED
+            observePlayerVars(getCurrentPlayerLiveData())
+            //playerStateLiveData.postValue(STATE_PREPARED)
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            playerState = STATE_PREPARED
+            observePlayerVars(getCurrentPlayerLiveData())
+            //playerStateLiveData.postValue(STATE_PREPARED)
             resetTimer()
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerStateLiveData.postValue(STATE_PLAYING)
+        //playerStateLiveData.postValue(STATE_PLAYING)
+        playerState = STATE_PLAYING
+        observePlayerVars(getCurrentPlayerLiveData())
         startTimerUpdate()
     }
 
     fun pausePlayer() {
         pauseTimer()
         mediaPlayer.pause()
-        playerStateLiveData.postValue(STATE_PAUSED)
+        //playerStateLiveData.postValue(STATE_PAUSED)
+        playerState = STATE_PAUSED
+        observePlayerVars(getCurrentPlayerLiveData())
     }
 
     private fun startTimerUpdate() {
-        progressTimeLiveData.postValue(
+        /*progressTimeLiveData.postValue(
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-        )
+        )*/
+        progressTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+        observePlayerVars(getCurrentPlayerLiveData())
         mainThreadHandler?.postDelayed(timerRunnable, REFRESH_TIMER_DELAY_MILLS)
     }
 
@@ -85,9 +101,15 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
 
     private fun resetTimer() {
         mainThreadHandler?.removeCallbacks(timerRunnable)
-        progressTimeLiveData.postValue("00:00")
+        //progressTimeLiveData.postValue("00:00")
+        progressTime = "00:00"
+        observePlayerVars(getCurrentPlayerLiveData())
     }
 
+    private fun getCurrentPlayerLiveData(): PlayerLiveData {
+        val currentPlayerLiveData = PlayerLiveData(playerState, progressTime)
+        return currentPlayerLiveData
+    }
 
     companion object {
         const val STATE_DEFAULT = 0

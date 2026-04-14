@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.ui.models
 
-import com.practicum.playlistmaker.player.domain.models.Track
+import com.practicum.playlistmaker.search.domain.models.Track
 
 sealed interface TracksState {
     object Loading : TracksState

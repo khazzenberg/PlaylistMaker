@@ -3,8 +3,8 @@ package com.practicum.playlistmaker.search.data
 import com.practicum.playlistmaker.creator.Result
 import com.practicum.playlistmaker.search.data.dto.TrackSearchResponse
 import com.practicum.playlistmaker.search.data.dto.TracksSearchRequest
-import com.practicum.playlistmaker.player.domain.api.TracksRepository
-import com.practicum.playlistmaker.player.domain.models.Track
+import com.practicum.playlistmaker.search.domain.api.TracksRepository
+import com.practicum.playlistmaker.search.domain.models.Track
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
     override fun searchTracks(expression: String): Result<List<Track>> {

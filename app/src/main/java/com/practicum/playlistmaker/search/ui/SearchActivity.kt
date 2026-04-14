@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
+import com.google.gson.Gson
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.player.domain.models.Track
+import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.ui.models.TracksState
 
@@ -197,7 +198,7 @@ class SearchActivity : AppCompatActivity() {
 
     fun startAudioPlayerActivity(track: Track) {
         val audioPlayerIntent = Intent(this, AudioPlayer::class.java)
-        audioPlayerIntent.putExtra(AudioPlayer.Companion.TRACK_EXTRA, track)
+        audioPlayerIntent.putExtra(AudioPlayer.Companion.TRACK_EXTRA, Gson().toJson(track))
         startActivity(audioPlayerIntent)
     }
 

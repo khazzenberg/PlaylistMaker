@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.TracksApplication
+import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.creator.Creator
 
 class SettingsActivity : AppCompatActivity() {
@@ -56,7 +56,7 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitcher.isChecked = viewModel.getTheme()
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             viewModel.changeTheme(checked)
-            (applicationContext as TracksApplication).switchTheme(checked)
+            (applicationContext as App).switchTheme(checked)
         }
     }
 }

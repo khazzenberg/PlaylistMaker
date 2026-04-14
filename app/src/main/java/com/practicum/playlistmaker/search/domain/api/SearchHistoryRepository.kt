@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.search.domain.api
 
 import com.practicum.playlistmaker.creator.Result
-import com.practicum.playlistmaker.player.domain.models.Track
+import com.practicum.playlistmaker.search.domain.models.Track
 
 interface SearchHistoryRepository {
     fun getHistory(): Result<List<Track>>

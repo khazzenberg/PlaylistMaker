@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.search.ui
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.player.domain.models.Track
+import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.ui.TrackViewHolder
 
 class TrackAdapter (

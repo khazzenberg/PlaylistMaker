@@ -8,10 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
 import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel.Companion.STATE_PLAYING
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.practicum.playlistmaker.player.domain.models.Track
+import com.practicum.playlistmaker.search.domain.models.Track
 
 class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
     private lateinit var viewModel: AudioPlayerViewModel
@@ -22,13 +23,10 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val track: Track? = (
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(TRACK_EXTRA, Track::class.java)
-                } else {
-                    @Suppress("DEPRECATION")
-                    intent.getParcelableExtra(TRACK_EXTRA)
-                })
+        val track = Gson().fromJson(
+            intent.getStringExtra(TRACK_EXTRA),
+            Track::class.java
+        )
 
         if (track == null) {
             finish()
@@ -38,13 +36,14 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
         viewModel = ViewModelProvider(this, AudioPlayerViewModel.getFactory(track))
             .get(AudioPlayerViewModel::class.java)
 
-        viewModel.observePlayerState().observe(this) {
-            changeButton(it == STATE_PLAYING)
-        }
+        viewModel.playerLiveData.observe(this, { playerLiveData ->
+            changeButton(playerLiveData.state == STATE_PLAYING)
+        })
 
-        viewModel.observeProgressTime().observe(this) {
-            binding.trackTimeCurrent.text = it
-        }
+        viewModel.playerLiveData.observe(this,{ playerLiveData ->
+            binding.trackTimeCurrent.text = playerLiveData.progress
+        })
+
         binding.menuButton.setNavigationOnClickListener {
             finish()
         }
