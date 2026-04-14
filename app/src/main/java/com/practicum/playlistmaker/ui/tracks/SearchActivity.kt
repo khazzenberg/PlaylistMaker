@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.tracks
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,20 +14,16 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
-import java.util.Locale
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import kotlinx.coroutines.Runnable
-
-const val SEARCH_TRACK_HISTORY_KEY = "searchTrackHistory"
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.Creator
+import com.practicum.playlistmaker.domain.api.TracksInteractor
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.ui.audioplayer.AudioPlayer
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var inputSearchText: EditText
@@ -38,11 +34,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackListSearch: RecyclerView
     private lateinit var historyLayout : LinearLayout
     private lateinit var clearHistoryButton: Button
-    private lateinit var searchHistory: SearchHistory
     private lateinit var progressBar: ProgressBar
     private var currentText: String = ""
     private val searchTextKey: String = "search_text"
-    private val trackService = RetrofitClient.iTunesService
+    private lateinit var loadTracksInteractor: TracksInteractor
     private val tracks: MutableList<Track> = mutableListOf()
     private val tracksAdapter = TrackAdapter(tracks)
     private val tracksHistory: MutableList<Track> = mutableListOf()
@@ -50,11 +45,12 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { search(currentText) }
+    private val searchHistoryInteractor by lazy { Creator.provideSearchTracksInteractor(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPreferences = getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPreferences)
+
+        loadTracksInteractor = Creator.provideTracksInteractor()
         setContentView(R.layout.activity_search)
 
         val backButton = findViewById<Button>(R.id.back)
@@ -129,9 +125,9 @@ class SearchActivity : AppCompatActivity() {
         trackListSearch = findViewById(R.id.recyclerHistoryView)
         trackListSearch.adapter = historyAdapter
         tracksAdapter.onTrackClick = { track ->
-            searchHistory.addTrack(track)
+            searchHistoryInteractor.add(track)
             tracksHistory.clear()
-            tracksHistory.addAll(searchHistory.getHistory())
+            tracksHistory.addAll(searchHistoryInteractor.get())
             historyAdapter.notifyDataSetChanged()
             if (clickDebounce()) {
                 startPlayer(track)
@@ -143,7 +139,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearHistoryButton.setOnClickListener {
-            searchHistory.clear()
+            searchHistoryInteractor.clear()
             updateHistory()
         }
 
@@ -161,7 +157,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateHistory() {
-        val list = searchHistory.getHistory()
+        val list = searchHistoryInteractor.get()
         if (list.isEmpty()) {
             historyLayout.visibility = View.GONE
         }
@@ -193,30 +189,30 @@ class SearchActivity : AppCompatActivity() {
 
         hide()
         progressBar.visibility = View.VISIBLE
-        trackService.searchSongs(query).enqueue(object : Callback<SearchResponse> {
-            override fun onResponse(call: Call<SearchResponse>, response: Response<SearchResponse>) {
-                if (response.isSuccessful) {
-                    val results = response.body()?.results.orEmpty()
-                    if (results.isNotEmpty()) {
-                        tracks.clear()
-                        tracks.addAll(results)
-                    }
-                    tracksAdapter.notifyDataSetChanged()
-                    historyLayout.visibility = View.GONE
-                    if (tracks.isEmpty()) {
-                        showEmptyState()
-                    } else {
-                        showSearchResults()
+        loadTracksInteractor.searchTracks(
+            currentText,
+            object : TracksInteractor.TracksConsumer {
+                override fun consume(result: Result<List<Track>>) {
+                    runOnUiThread {
+                        result.onSuccess { foundTracks ->
+                            if (foundTracks.isEmpty()) {
+                                tracks.clear()
+                                tracksAdapter.notifyDataSetChanged()
+                                showEmptyState()
+                            } else {
+                                tracks.clear()
+                                tracks.addAll(foundTracks)
+                                tracksAdapter.notifyDataSetChanged()
+                                showSearchResults()
+                            }
+                        }.onFailure {
+                            tracks.clear()
+                            tracksAdapter.notifyDataSetChanged()
+                            showErrorState()
+                        }
                     }
                 }
-            }
-
-            override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                tracks.clear()
-                tracksAdapter.notifyDataSetChanged()
-                showErrorState()
-            }
-        })
+            })
     }
 
     private fun showSearchResults() {
