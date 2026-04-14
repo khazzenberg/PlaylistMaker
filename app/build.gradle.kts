@@ -8,11 +8,6 @@ android {
     namespace = "com.practicum.playlistmaker"
     compileSdk = 35
 
-    buildFeatures {
-        viewBinding = true
-        //dataBinding = true
-    }
-
     defaultConfig {
         applicationId = "com.practicum.playlistmaker"
         minSdk = 29
@@ -57,8 +52,4 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-    implementation("androidx.activity:activity-ktx:1.6.1")
 }
