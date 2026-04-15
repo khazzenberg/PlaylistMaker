@@ -1,14 +1,15 @@
 package com.practicum.playlistmaker.search.ui
 
-import com.google.gson.Gson
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.player.ui.AudioPlayer
@@ -96,6 +97,9 @@ class SearchActivity : AppCompatActivity() {
 
         binding.inputSearchText.setOnFocusChangeListener { view, hasFocus ->
             viewModel.searchDebounce(binding.inputSearchText.text.toString())
+            if (hasFocus && (view as EditText).text.isEmpty()) {
+                viewModel.loadHistory()
+            }
         }
     }
 
@@ -195,7 +199,9 @@ class SearchActivity : AppCompatActivity() {
 
     fun startAudioPlayerActivity(track: Track) {
         val audioPlayerIntent = Intent(this, AudioPlayer::class.java)
-        audioPlayerIntent.putExtra(AudioPlayer.Companion.TRACK_EXTRA, Gson().toJson(track))
+        audioPlayerIntent.putExtra(
+            AudioPlayer.Companion.TRACK_EXTRA,
+            (applicationContext as App).gson.toJson(track))
         startActivity(audioPlayerIntent)
     }
 

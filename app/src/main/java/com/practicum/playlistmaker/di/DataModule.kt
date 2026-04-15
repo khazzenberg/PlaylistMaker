@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Context
-import com.google.gson.Gson
+import com.practicum.playlistmaker.App
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.search.data.network.RetrofitClient
 import com.practicum.playlistmaker.search.domain.models.Track
@@ -18,10 +18,15 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+private const val baseUrl = "https://itunes.apple.com/"
+private const val trackSearchKey = "TRACKS_SEARCH"
+private const val historyKey = "HISTORY"
+private const val playListMakerKey = "playlistmaker"
+
 val dataModule = module {
     single<ITunesApi> {
         Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com/")
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ITunesApi::class.java)
@@ -30,16 +35,16 @@ val dataModule = module {
     single {
         androidContext()
             .getSharedPreferences(
-                "TRACKS_SEARCH",
+                trackSearchKey,
                 Context.MODE_PRIVATE
             )
     }
 
-    factory { Gson() }
+    factory { (androidContext() as App).gson }
 
     single<StorageClient<ArrayList<Track>>> {
         PrefsStorageClient(
-            "HISTORY",
+            historyKey,
             object : TypeToken<ArrayList<Track>>() {}.type,
             get(),
             get()
@@ -53,7 +58,7 @@ val dataModule = module {
     single<SettingsStorage> {
         SettingsStorageImpl(
             androidContext().getSharedPreferences(
-                "playlistmaker",
+                playListMakerKey,
                 Context.MODE_PRIVATE
             )
         )

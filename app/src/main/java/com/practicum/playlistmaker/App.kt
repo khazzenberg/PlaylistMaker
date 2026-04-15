@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import android.util.Log
+import com.google.gson.Gson
 import androidx.appcompat.app.AppCompatDelegate
 import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.interactorModule
@@ -16,6 +16,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.logger.Level
 
 class App : Application() {
+    val gson = Gson()
     override fun onCreate() {
         super.onCreate()
         startKoin {
