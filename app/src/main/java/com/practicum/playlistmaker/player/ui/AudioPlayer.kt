@@ -5,17 +5,24 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel.Companion.STATE_PLAYING
+import com.practicum.playlistmaker.player.domain.models.PlayerState
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
-    private lateinit var viewModel: AudioPlayerViewModel
+    private val track: Track by lazy {
+        Gson().fromJson(
+            intent.getStringExtra(TRACK_EXTRA),
+            Track::class.java
+        )
+    }
+    private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
     private lateinit var binding: ActivityAudioPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,21 +30,13 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val track = Gson().fromJson(
-            intent.getStringExtra(TRACK_EXTRA),
-            Track::class.java
-        )
-
         if (track == null) {
             finish()
             return
         }
 
-        viewModel = ViewModelProvider(this, AudioPlayerViewModel.getFactory(track))
-            .get(AudioPlayerViewModel::class.java)
-
         viewModel.playerLiveData.observe(this, { playerLiveData ->
-            changeButton(playerLiveData.state == STATE_PLAYING)
+            changeButton(playerLiveData.state == PlayerState.PLAYING)
         })
 
         viewModel.playerLiveData.observe(this,{ playerLiveData ->
