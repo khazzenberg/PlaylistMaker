@@ -57,7 +57,7 @@ android:background="?attr/colorPrimary">
             android:textColor="?attr/editTextColorText"
             android:textColorHint="?attr/editTextColorTextHint" />
         <ImageView
-            android:id="@+id/buttonClearSearch"
+            android:id="@+id/searchClearButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
@@ -82,7 +82,7 @@ android:background="?attr/colorPrimary">
             android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/trackList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/padding_medium"
@@ -157,7 +157,7 @@ android:background="?attr/colorPrimary">
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/historyLinearLayout"
+            android:id="@+id/historyLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top|center_horizontal"
@@ -169,14 +169,14 @@ android:background="?attr/colorPrimary">
                 android:paddingTop="24dp"
                 android:paddingBottom="8dp"/>
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerHistoryView"
+                android:id="@+id/historyList"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginTop="@dimen/padding_medium"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
             <Button
-                android:id="@+id/clearButton"
+                android:id="@+id/clearHistoryButton"
                 style="@style/ButtonSearchStyle"
                 android:text="@string/clear_history"/>
         </LinearLayout>

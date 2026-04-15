@@ -2,15 +2,13 @@ package com.practicum.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.practicum.playlistmaker.domain.Creator
+import com.practicum.playlistmaker.creator.Creator
 
 class App : Application() {
-
     override fun onCreate() {
         super.onCreate()
-
         val settingsInteractor = Creator.provideSettingsInteractor(this)
-        val darkTheme = settingsInteractor.isDarkThemeEnabled()
+        val darkTheme = settingsInteractor.getThemeSettings().isDarkTheme
         switchTheme(darkTheme)
     }
 
