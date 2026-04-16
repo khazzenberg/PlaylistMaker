@@ -9,14 +9,16 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.practicum.playlistmaker.App
+import com.google.gson.Gson
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.ui.models.TracksState
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
 
 class SearchActivity : AppCompatActivity() {
+    private val gson: Gson by inject()
     private val viewModel: SearchViewModel by viewModel()
     private lateinit var binding: ActivitySearchBinding
     private lateinit var simpleTextWatcher: TextWatcher
@@ -201,7 +203,7 @@ class SearchActivity : AppCompatActivity() {
         val audioPlayerIntent = Intent(this, AudioPlayer::class.java)
         audioPlayerIntent.putExtra(
             AudioPlayer.Companion.TRACK_EXTRA,
-            (applicationContext as App).gson.toJson(track))
+            gson.toJson(track))
         startActivity(audioPlayerIntent)
     }
 

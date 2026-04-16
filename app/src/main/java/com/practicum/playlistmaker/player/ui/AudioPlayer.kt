@@ -1,23 +1,24 @@
 package com.practicum.playlistmaker.player.ui
 
-import android.os.Build
+import com.google.gson.Gson
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.player.domain.models.PlayerState
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import org.koin.android.ext.android.inject
 
 class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
+    private val gson: Gson by inject()
     private val track: Track by lazy {
-        (applicationContext as App).gson.fromJson(
+        gson.fromJson(
             intent.getStringExtra(TRACK_EXTRA),
             Track::class.java
         )

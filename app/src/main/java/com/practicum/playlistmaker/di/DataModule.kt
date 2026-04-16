@@ -1,7 +1,8 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Context
-import com.practicum.playlistmaker.App
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.search.data.network.RetrofitClient
 import com.practicum.playlistmaker.search.domain.models.Track
@@ -40,7 +41,7 @@ val dataModule = module {
             )
     }
 
-    factory { (androidContext() as App).gson }
+    single<Gson> { GsonBuilder().create() }
 
     single<StorageClient<ArrayList<Track>>> {
         PrefsStorageClient(
