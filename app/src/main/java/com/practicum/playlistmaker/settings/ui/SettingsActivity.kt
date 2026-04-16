@@ -4,26 +4,17 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.App
-import com.practicum.playlistmaker.creator.Creator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        val settingsInteractor = Creator.provideSettingsInteractor(applicationContext)
-        val sharingInteractor = Creator.provideSharingInteractor(applicationContext)
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.getFactory(sharingInteractor, settingsInteractor)
-        )
-            .get(SettingsViewModel::class.java)
 
         val backButton = findViewById<Button>(R.id.back)
         backButton.setOnClickListener {

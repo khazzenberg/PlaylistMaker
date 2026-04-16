@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.sharing.data.impl
 
 import android.content.Context
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.sharing.data.ExternalNavigator
+import com.practicum.playlistmaker.sharing.data.storage.ExternalNavigator
 import com.practicum.playlistmaker.sharing.domain.SharingRepository
 import com.practicum.playlistmaker.sharing.domain.model.EmailData
 
