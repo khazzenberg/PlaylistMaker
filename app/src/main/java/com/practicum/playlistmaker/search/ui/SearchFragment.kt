@@ -1,26 +1,30 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.view.ViewGroup
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.player.ui.AudioPlayerFragment
 import com.practicum.playlistmaker.search.domain.models.Track
-import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.ui.models.TracksState
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
     private val gson: Gson by inject()
     private val viewModel: SearchViewModel by viewModel()
-    private lateinit var binding: ActivitySearchBinding
     private lateinit var simpleTextWatcher: TextWatcher
     private val tracks: MutableList<Track> = mutableListOf()
     private val adapter = TrackAdapter(tracks)
@@ -28,40 +32,48 @@ class SearchActivity : AppCompatActivity() {
     private val historyAdapter = TrackAdapter(tracksHistory)
     private var constTextEdit: String = TEXT_EDIT_VALUE
     private var constIsClearButtonVisible: Int = View.GONE
+    private var _binding: FragmentSearchBinding? = null
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return _binding?.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        viewModel.observeState().observe(this) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
         if (savedInstanceState != null) {
-            constTextEdit = savedInstanceState.getString(EDIT_TEXT, TEXT_EDIT_VALUE)
+            constTextEdit = savedInstanceState.getString(
+                EDIT_TEXT,
+                TEXT_EDIT_VALUE
+            )
             constIsClearButtonVisible = savedInstanceState.getInt(IS_VISIBLE_BUTTON, 0)
         }
-        binding.inputSearchText.setText(constTextEdit)
-        binding.searchClearButton.visibility = constIsClearButtonVisible
 
-        binding.back.setOnClickListener {
-            finish()
-        }
+        _binding?.inputSearchText?.setText(constTextEdit)
+        _binding?.searchClearButton?.visibility = constIsClearButtonVisible
 
-        binding.trackList.adapter = adapter
-        binding.trackList.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        _binding?.trackList?.adapter = adapter
+        _binding?.trackList?.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         adapter.onTrackClick = { track ->
             viewModel.onCLickTrack(track)
-            startAudioPlayerActivity(track)
+            findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment,
+                AudioPlayerFragment.createArgs(gson.toJson(track)))
         }
 
-        binding.historyList.adapter = historyAdapter
+        _binding?.historyList?.adapter = historyAdapter
         historyAdapter.onTrackClick = { track ->
             viewModel.onCLickTrack(track)
-            startAudioPlayerActivity(track)
+            findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment,
+                AudioPlayerFragment.createArgs(gson.toJson(track)))
         }
 
         simpleTextWatcher = object : TextWatcher {
@@ -70,11 +82,11 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.searchDebounce(changedText = s?.toString() ?: "")
-                constTextEdit = binding.inputSearchText.text.toString()
-                binding.searchClearButton.visibility = clearButtonVisibility(s)
-                constIsClearButtonVisible = binding.searchClearButton.visibility
+                constTextEdit = _binding?.inputSearchText?.text.toString()
+                _binding?.searchClearButton?.visibility = clearButtonVisibility(s)
+                constIsClearButtonVisible = _binding?.searchClearButton?.visibility!!
 
-                if (binding.inputSearchText.hasFocus() && s?.isEmpty() == true) {
+                if (_binding?.inputSearchText?.hasFocus()!! && s?.isEmpty() == true) {
                     viewModel.loadHistory()
                 }
             }
@@ -83,22 +95,23 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        binding.inputSearchText.addTextChangedListener(simpleTextWatcher)
+        _binding?.inputSearchText?.addTextChangedListener(simpleTextWatcher)
 
-        binding.updateButton.setOnClickListener {
-            viewModel.searchDebounce(binding.inputSearchText.text.toString(), true)
+        _binding?.updateButton?.setOnClickListener {
+            viewModel.searchDebounce(_binding?.inputSearchText?.text.toString(), true)
         }
 
-        binding.clearHistoryButton.setOnClickListener {
+        _binding?.clearHistoryButton?.setOnClickListener {
             viewModel.clearHistory()
         }
-        binding.searchClearButton.setOnClickListener {
-            binding.inputSearchText.setText("")
+
+        _binding?.searchClearButton?.setOnClickListener {
+            _binding?.inputSearchText?.setText("")
             closeKeyboard()
         }
 
-        binding.inputSearchText.setOnFocusChangeListener { view, hasFocus ->
-            viewModel.searchDebounce(binding.inputSearchText.text.toString())
+        _binding?.inputSearchText?.setOnFocusChangeListener { view, hasFocus ->
+            viewModel.searchDebounce(_binding?.inputSearchText?.text.toString())
             if (hasFocus && (view as EditText).text.isEmpty()) {
                 viewModel.loadHistory()
             }
@@ -114,7 +127,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showContent(foundTrack: List<Track>) {
-        binding.apply {
+        _binding?.apply {
             errorState.visibility = View.GONE
             emptyState.visibility = View.GONE
             progressBar.visibility = View.GONE
@@ -128,7 +141,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showHistory(foundTrack: List<Track>) {
-        binding.apply {
+        _binding?.apply {
             errorState.visibility = View.GONE
             emptyState.visibility = View.GONE
             progressBar.visibility = View.GONE
@@ -145,7 +158,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showLoading() {
-        binding.apply {
+        _binding?.apply {
             errorState.visibility = View.GONE
             emptyState.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
@@ -155,7 +168,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showError() {
-        binding.apply {
+        _binding?.apply {
             errorState.visibility = View.VISIBLE
             emptyState.visibility = View.GONE
             trackList.visibility = View.GONE
@@ -165,7 +178,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showEmpty() {
-        binding.apply {
+        _binding?.apply {
             errorState.visibility = View.GONE
             emptyState.visibility = View.VISIBLE
             trackList.visibility = View.GONE
@@ -174,8 +187,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun closeKeyboard() {
-        this.currentFocus?.let { view ->
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        requireActivity().currentFocus?.let { view ->
+            val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
@@ -189,6 +202,11 @@ class SearchActivity : AppCompatActivity() {
         )
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        simpleTextWatcher?.let { _binding?.inputSearchText?.removeTextChangedListener(it) }//??
+    }
+
     fun render(state: TracksState) {
         when (state) {
             is TracksState.Loading -> showLoading()
@@ -199,12 +217,9 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    fun startAudioPlayerActivity(track: Track) {
-        val audioPlayerIntent = Intent(this, AudioPlayer::class.java)
-        audioPlayerIntent.putExtra(
-            AudioPlayer.Companion.TRACK_EXTRA,
-            gson.toJson(track))
-        startActivity(audioPlayerIntent)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
