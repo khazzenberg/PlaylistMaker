@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-    android:background="?attr/colorPrimary">
+    android:background="?attr/colorPrimary"
+    tools:context="com.practicum.playlistmaker.player.ui.AudioPlayerFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

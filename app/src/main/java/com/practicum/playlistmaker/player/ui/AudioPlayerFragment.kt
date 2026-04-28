@@ -1,60 +1,66 @@
 package com.practicum.playlistmaker.player.ui
 
-import com.google.gson.Gson
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.practicum.playlistmaker.player.domain.models.PlayerState
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.databinding.FragmentAudioPlayerBinding
+import com.practicum.playlistmaker.player.domain.models.PlayerState
 import com.practicum.playlistmaker.search.domain.models.Track
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import org.koin.android.ext.android.inject
+import kotlin.getValue
 
-class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
+class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
     private val gson: Gson by inject()
     private val track: Track by lazy {
         gson.fromJson(
-            intent.getStringExtra(TRACK_EXTRA),
+            requireArguments().getString(TRACK_EXTRA),
             Track::class.java
-        )
+        )?: error("Track is missing")
     }
+
     private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
-    private lateinit var binding: ActivityAudioPlayerBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private var _binding: FragmentAudioPlayerBinding? = null
 
-        if (track == null) {
-            finish()
-            return
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
 
-        viewModel.playerLiveData.observe(this, { playerLiveData ->
+        return _binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.playerLiveData.observe(viewLifecycleOwner, { playerLiveData ->
             changeButton(playerLiveData.state == PlayerState.PLAYING)
         })
 
-        viewModel.playerLiveData.observe(this,{ playerLiveData ->
-            binding.trackTimeCurrent.text = playerLiveData.progress
+        viewModel.playerLiveData.observe(viewLifecycleOwner,{ playerLiveData ->
+            _binding?.trackTimeCurrent?.text = playerLiveData.progress
         })
-
-        binding.menuButton.setNavigationOnClickListener {
-            finish()
-        }
 
         Glide.with(this)
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.ic_placeholder_312)
             .transform(RoundedCorners(dpToPx(8f)))
-            .into(binding.imageAlbum)
+            .into(_binding?.imageAlbum!!)
 
-        binding.apply {
+        _binding?.apply {
             trackName.text = track.trackName
             trackArtist.text = track.artistName
             trackTime.text = track.getFormattedTime()
@@ -63,16 +69,21 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
         }
         visibleText(track)
 
-        binding.play.setOnClickListener {
+        _binding?.play?.setOnClickListener {
             viewModel.onPlayButtonClicked()
         }
-        binding.pause.setOnClickListener {
+
+        _binding?.pause?.setOnClickListener {
             viewModel.pausePlayer()
+        }
+
+        _binding?.menuButton?.setOnClickListener{
+            findNavController().navigateUp()
         }
     }
 
     private fun visibleText(track: Track) {
-        binding.apply {
+        _binding?.apply {
             trackYear.visibility = View.GONE
             year.visibility = View.GONE
             trackAlbum.visibility = View.GONE
@@ -100,22 +111,24 @@ class AudioPlayer : AppCompatActivity(R.layout.activity_audio_player) {
         ).toInt()
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     private fun changeButton(isPlaying: Boolean) {
         if (isPlaying) {
-            binding.play.visibility = View.GONE
-            binding.pause.visibility = View.VISIBLE
+            _binding?.play?.visibility = View.GONE
+            _binding?.pause?.visibility = View.VISIBLE
         } else {
-            binding.play.visibility = View.VISIBLE
-            binding.pause.visibility = View.GONE
+            _binding?.play?.visibility = View.VISIBLE
+            _binding?.pause?.visibility = View.GONE
         }
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     companion object {
-        const val TRACK_EXTRA = "TRACK_EXTRA"
+        private const val TRACK_EXTRA = "TRACK_EXTRA"
+        fun createArgs(track: String): Bundle = bundleOf(TRACK_EXTRA to track)
     }
 }
