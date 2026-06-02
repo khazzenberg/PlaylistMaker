@@ -13,7 +13,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAudioPlayerBinding
-import com.practicum.playlistmaker.player.domain.models.PlayerState
 import com.practicum.playlistmaker.search.domain.models.Track
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,6 +20,7 @@ import org.koin.core.parameter.parametersOf
 import kotlin.getValue
 
 class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
+    private var _binding: FragmentAudioPlayerBinding? = null
     private val gson: Gson by inject()
     private val track: Track by lazy {
         gson.fromJson(
@@ -30,8 +30,6 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
     }
 
     private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
-
-    private var _binding: FragmentAudioPlayerBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,13 +44,10 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.playerLiveData.observe(viewLifecycleOwner, { playerLiveData ->
-            changeButton(playerLiveData.state == PlayerState.PLAYING)
-        })
-
-        viewModel.playerLiveData.observe(viewLifecycleOwner,{ playerLiveData ->
-            _binding?.trackTimeCurrent?.text = playerLiveData.progress
-        })
+        viewModel.observePlayerState().observe(viewLifecycleOwner) {
+            changeButton(it.isPlayButtonEnabled)
+            _binding?.trackTimeCurrent?.text = it.progress
+        }
 
         Glide.with(this)
             .load(track.getCoverArtwork())
@@ -74,7 +69,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
         }
 
         _binding?.pause?.setOnClickListener {
-            viewModel.pausePlayer()
+            viewModel.onPlayButtonClicked()
         }
 
         _binding?.menuButton?.setOnClickListener{
@@ -111,20 +106,19 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
         ).toInt()
     }
 
-    private fun changeButton(isPlaying: Boolean) {
-        if (isPlaying) {
-            _binding?.play?.visibility = View.GONE
-            _binding?.pause?.visibility = View.VISIBLE
-        } else {
+    private fun changeButton(isPlayButtonEnabled: Boolean) {
+        if (isPlayButtonEnabled) {
             _binding?.play?.visibility = View.VISIBLE
             _binding?.pause?.visibility = View.GONE
+        } else {
+            _binding?.play?.visibility = View.GONE
+            _binding?.pause?.visibility = View.VISIBLE
         }
-
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPause()
     }
 
     companion object {
