@@ -14,7 +14,8 @@ data class Track(
     val releaseDate: String?,
     val primaryGenreName: String,
     val country: String,
-    val previewUrl: String
+    val previewUrl: String,
+    var isLike: Boolean = false
 ) : Serializable {
     fun getFormattedTime(): String =
         SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)

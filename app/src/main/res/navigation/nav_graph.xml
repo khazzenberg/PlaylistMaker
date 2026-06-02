@@ -23,7 +23,11 @@
         android:id="@+id/libraryFragment"
         android:name="com.practicum.playlistmaker.library.ui.LibraryFragment"
         android:label="fragment_library"
-        tools:layout="@layout/fragment_library" />
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_libraryFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.practicum.playlistmaker.settings.ui.SettingsFragment"

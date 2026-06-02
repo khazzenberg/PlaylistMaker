@@ -1,9 +1,11 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Context
+import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.library.data.db.AppDatabase
 import com.practicum.playlistmaker.search.data.network.RetrofitClient
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.data.NetworkClient
@@ -68,4 +70,11 @@ val dataModule = module {
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
     }
+
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            AppDatabase::class.java,
+            "tracks_database"
+        ).build()}
 }

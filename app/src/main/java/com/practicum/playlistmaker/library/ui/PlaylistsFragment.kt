@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.practicum.playlistmaker.library.presentation.PlaylistsViewModel
 
 
 class PlaylistsFragment : Fragment() {
