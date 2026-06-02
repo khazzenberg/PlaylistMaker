@@ -10,14 +10,17 @@ import android.view.inputmethod.InputMethodManager
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.AudioPlayerFragment
+import com.practicum.playlistmaker.root.ui.RootActivity
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.ui.models.TracksState
+import com.practicum.playlistmaker.util.debounce
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -26,6 +29,7 @@ class SearchFragment : Fragment() {
     private val gson: Gson by inject()
     private val viewModel: SearchViewModel by viewModel()
     private lateinit var simpleTextWatcher: TextWatcher
+    private lateinit var onTrackSearchDebounce: (Track) -> Unit
     private val tracks: MutableList<Track> = mutableListOf()
     private val adapter = TrackAdapter(tracks)
     private val tracksHistory: MutableList<Track> = mutableListOf()
@@ -59,21 +63,33 @@ class SearchFragment : Fragment() {
         _binding?.inputSearchText?.setText(constTextEdit)
         _binding?.searchClearButton?.visibility = constIsClearButtonVisible
 
+        onTrackSearchDebounce =
+            debounce<Track>(
+                CLICK_DEBOUNCE_DELAY,
+                viewLifecycleOwner.lifecycleScope,
+                false
+            ) { track ->
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_audioPlayerFragment,
+                    AudioPlayerFragment.createArgs(gson.toJson(track))
+                )
+            }
+
         _binding?.trackList?.adapter = adapter
         _binding?.trackList?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         adapter.onTrackClick = { track ->
             viewModel.onCLickTrack(track)
-            findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment,
-                AudioPlayerFragment.createArgs(gson.toJson(track)))
+            (activity as RootActivity).animateBottomNavigationView()
+            onTrackSearchDebounce(track)
         }
 
         _binding?.historyList?.adapter = historyAdapter
         historyAdapter.onTrackClick = { track ->
             viewModel.onCLickTrack(track)
-            findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment,
-                AudioPlayerFragment.createArgs(gson.toJson(track)))
+            (activity as RootActivity).animateBottomNavigationView()
+            onTrackSearchDebounce(track)
         }
 
         simpleTextWatcher = object : TextWatcher {
@@ -226,5 +242,6 @@ class SearchFragment : Fragment() {
         private const val EDIT_TEXT = "EDIT_TEXT"
         private const val TEXT_EDIT_VALUE = ""
         private const val IS_VISIBLE_BUTTON = "IS_VISIBLE_BUTTON"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
