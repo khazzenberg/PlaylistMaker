@@ -1,10 +1,12 @@
 package com.practicum.playlistmaker.player.ui
 
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -44,11 +46,6 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observePlayerState().observe(viewLifecycleOwner) {
-            changeButton(it.isPlayButtonEnabled)
-            _binding?.trackTimeCurrent?.text = it.progress
-        }
-
         Glide.with(this)
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.ic_placeholder_312)
@@ -74,6 +71,31 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player) {
 
         _binding?.menuButton?.setOnClickListener{
             findNavController().navigateUp()
+        }
+
+        _binding?.like?.setOnClickListener { viewModel.onLikeClicked() }
+
+        viewModel.observePlayerState().observe(viewLifecycleOwner) {
+            changeButton(it.isPlayButtonEnabled)
+            _binding?.trackTimeCurrent?.text = it.progress
+        }
+
+        viewModel.observeLikeState().observe(viewLifecycleOwner) {
+            if (it.isLike) {
+                _binding?.like?.setColorFilter(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red),
+                    PorterDuff.Mode.SRC_IN)
+                _binding?.like?.setImageResource(R.drawable.ic_like_active_25_23)
+            } else {
+                _binding?.like?.setColorFilter(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white),
+                    PorterDuff.Mode.SRC_IN)
+                _binding?.like?.setImageResource(R.drawable.ic_like_25_23)
+            }
         }
     }
 
