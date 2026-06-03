@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/min_height"
+    android:orientation="horizontal"
+    android:paddingStart="13dp"
+    android:paddingEnd="@dimen/padding_12">
+
+    <ImageView
+        android:id="@+id/imagePlaylist"
+        android:layout_width="@dimen/image_small"
+        android:layout_height="@dimen/image_small"
+        android:layout_marginVertical="@dimen/padding_small_8"
+        android:src="@drawable/ic_placeholder_45"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_small_8"
+        android:paddingVertical="@dimen/padding_small">
+
+        <TextView
+            android:id="@+id/namePlaylist"
+            style="@style/TrackViewStyle"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/colorSecondaryVariant"
+            android:textSize="@dimen/text_size_small"
+            tools:text="@string/playlist_name" />
+
+        <TextView
+            android:id="@+id/countTracks"
+            style="@style/TrackViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="@string/tracks_count" />
+    </LinearLayout>
+</LinearLayout>
