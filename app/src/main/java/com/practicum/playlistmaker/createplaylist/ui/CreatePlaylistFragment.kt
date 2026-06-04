@@ -132,7 +132,7 @@ class CreatePlaylistFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.NewMaterialDialog)
             .setTitle(getString(R.string.finish_create_pl))
             .setMessage(getString(R.string.finish_create_pl_msg))
             .setNeutralButton(getString(R.string.cancel)) { dialog, which ->

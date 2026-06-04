@@ -28,7 +28,7 @@
             style="@style/TrackViewStyle"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="?attr/colorSecondaryVariant"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/text_size_small"
             tools:text="@string/playlist_name" />
 
