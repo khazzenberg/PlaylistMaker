@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.createplaylist.ui
+package com.practicum.playlistmaker.playlist.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,34 +7,30 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.createplaylist.presentation.CreatePlaylistViewModel
-import com.practicum.playlistmaker.createplaylist.presentation.NameState
 import com.practicum.playlistmaker.databinding.FragmentCreatePlaylistBinding
+import com.practicum.playlistmaker.playlist.presentation.CreatePlaylistViewModel
+import com.practicum.playlistmaker.playlist.presentation.NameState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.getValue
 
-import androidx.activity.OnBackPressedDispatcher
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-
-class CreatePlaylistFragment : Fragment() {
-    private var _binding: FragmentCreatePlaylistBinding? = null
+open class CreatePlaylistFragment : Fragment() {
+    var _binding: FragmentCreatePlaylistBinding? = null
     private lateinit var simpleTextWatcher: TextWatcher
     private var fileP: File? = null
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
@@ -44,7 +40,7 @@ class CreatePlaylistFragment : Fragment() {
         fun newInstance() = CreatePlaylistFragment()
     }
 
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+    open val viewModel: CreatePlaylistViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,16 +116,7 @@ class CreatePlaylistFragment : Fragment() {
         }
 
         _binding?.create?.setOnClickListener {
-            viewModel.createPlaylist(
-                _binding?.nameEditText?.text.toString(),
-                _binding?.descriptionEditText?.text.toString(),
-                fileP?.absolutePath?: ""
-            )
-            Toast.makeText(
-                requireContext(),
-                "Плейлист ${_binding?.nameEditText?.text.toString()} создан",
-                Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
+            onSavePlaylist()
         }
 
         confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.NewMaterialDialog)
@@ -143,7 +130,7 @@ class CreatePlaylistFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(
             this,
-            object : androidx.activity.OnBackPressedCallback(true) {
+            object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     handleBackNavigation()
                 }
@@ -151,6 +138,20 @@ class CreatePlaylistFragment : Fragment() {
 
         _binding?.create?.isEnabled = false
     }
+
+    protected open fun onSavePlaylist(){
+        viewModel.createPlaylist(
+            _binding?.nameEditText?.text.toString(),
+            _binding?.descriptionEditText?.text.toString(),
+            fileP?.absolutePath?: ""
+        )
+        Toast.makeText(
+            requireContext(),
+            "Плейлист ${_binding?.nameEditText?.text.toString()} создан",
+            Toast.LENGTH_SHORT).show()
+        findNavController().popBackStack()
+    }
+
     fun handleBackNavigation(){
         if (_binding?.nameEditText?.text.toString().isNotEmpty()
             || (fileP?.absolutePath?.isNotEmpty() == true)
@@ -159,7 +160,8 @@ class CreatePlaylistFragment : Fragment() {
             confirmDialog.show()
         else findNavController().popBackStack()
     }
-    private fun render(state: NameState) {
+
+    protected open fun render(state: NameState) {
         if (state.isEmpty) {
             _binding?.create?.isEnabled = false
         } else {
@@ -167,7 +169,7 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun dpToPx(dp: Float): Int {
+    fun dpToPx(dp: Float): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,
@@ -175,24 +177,18 @@ class CreatePlaylistFragment : Fragment() {
         ).toInt()
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri, name: String): File {
-        //создаём экземпляр класса File, который указывает на нужный каталог
+    protected open fun saveImageToPrivateStorage(uri: Uri, name: String): File {
         val filePath =
             File(
                 requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 "myalbum"
             )
-        //создаем каталог, если он не создан
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
-        //создаём экземпляр класса File, который указывает на файл внутри каталога
         val file = File(filePath, "$name.jpg")
-        // создаём входящий поток байтов из выбранной картинки
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        // создаём исходящий поток байтов в созданный выше файл
         val outputStream = FileOutputStream(file)
-        // записываем картинку с помощью BitmapFactory
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)

@@ -42,7 +42,12 @@ class PlaylistsFragment : Fragment() {
             )
         }
 
-        adapter = PlaylistAdapter()
+        adapter = PlaylistAdapter { playlistId ->
+            findNavController().navigate(
+                R.id.action_libraryFragment_to_playlistCardFragment,
+                PlaylistCardFragment.createArgs(playlistId)
+            )
+        }
         _binding?.recyclerView?.adapter = adapter
         _binding?.recyclerView?.layoutManager = GridLayoutManager(
             requireContext(),
