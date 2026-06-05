@@ -1,15 +1,15 @@
-package com.practicum.playlistmaker.createplaylist.presentation
+package com.practicum.playlistmaker.playlist.presentation
 
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.playlist.presentation.NameState
 import com.practicum.playlistmaker.playlist.domain.db.PlaylistInteractor
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import kotlinx.coroutines.launch
 
-class CreatePlaylistViewModel(val interactor: PlaylistInteractor) : ViewModel() {
+open class CreatePlaylistViewModel(val interactor: PlaylistInteractor) : ViewModel() {
     private val stateLiveData = MutableLiveData<NameState>()
     fun observeState(): LiveData<NameState> = stateLiveData
 
@@ -22,9 +22,15 @@ class CreatePlaylistViewModel(val interactor: PlaylistInteractor) : ViewModel() 
         }
     }
 
-    fun createPlaylist(name: String, description: String, image: String) {
+    open fun createPlaylist(name: String, description: String, image: String) {
         viewModelScope.launch {
-            val playlist = Playlist(name = name, description = description, image = image, tracks =  mutableListOf(), count = 0)
+            val playlist = Playlist(
+                name = name,
+                description = description,
+                image = image,
+                tracks = mutableListOf(),
+                count = 0
+            )
             interactor.insertPlaylist(playlist)
         }
     }

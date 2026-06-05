@@ -45,4 +45,19 @@ class PlaylistDbConvertor {
             track.previewUrl ?: "",
         )
     }
+
+    fun mapTrackInPlaylist(trackInPlaylistEntity: TrackInPlaylistEntity): Track {
+        return Track(
+            trackInPlaylistEntity.trackId,
+            trackInPlaylistEntity.trackName,
+            trackInPlaylistEntity.artistName,
+            trackInPlaylistEntity.trackTimeMillis,
+            trackInPlaylistEntity.artworkUrl100,
+            trackInPlaylistEntity.collectionName,
+            trackInPlaylistEntity.releaseDate,
+            trackInPlaylistEntity.primaryGenreName,
+            trackInPlaylistEntity.country,
+            trackInPlaylistEntity.previewUrl
+        )
+    }
 }
