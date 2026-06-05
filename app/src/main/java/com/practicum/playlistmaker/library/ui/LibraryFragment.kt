@@ -28,18 +28,25 @@ class LibraryFragment: Fragment() {
             fragmentManager = childFragmentManager,
             lifecycle = lifecycle,
         )
-        tabMediator = TabLayoutMediator(_binding?.tabLayout!!, _binding?.viewPager!!) { tab, position ->
-            when (position) {
-                0 -> tab.text = getString(R.string.favorite_tracks)
-                1 -> tab.text = getString(R.string.playlists)
+        _binding?.tabLayout?.let {
+            _binding?.viewPager?.let { viewPager ->
+                tabMediator = TabLayoutMediator(
+                    it,
+                    viewPager
+                ) { tab, position ->
+                    when (position) {
+                        0 -> tab.text = getString(R.string.favorite_tracks)
+                        1 -> tab.text = getString(R.string.playlists)
+                    }
+                }
             }
         }
         tabMediator.attach()
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         tabMediator.detach()
-        _binding = null
     }
 }
